@@ -15,7 +15,7 @@ inputs:
     default: "136233525+emortalmc-bot@users.noreply.github.com"
   ssh-key:
     description: "The ssh key to use for the git commit"
-    default: ${{ secrets.AUTOMATION_SSH_KEY }}
+    required: true
 
   # Project details
   docker-image-name:
