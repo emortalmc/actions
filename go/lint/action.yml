@@ -1,0 +1,22 @@
+name: "go-lint"
+description: "Runs golangci-lint on the codebase"
+author: "Zak Shearman"
+
+inputs:
+  go-version:
+    description: "The version of go to use"
+    default: "1.20"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@v4
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: false
+    - uses: actions/checkout@v3
+    - name: go-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest
+        args: --timeout 2m0s
