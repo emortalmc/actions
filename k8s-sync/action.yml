@@ -1,0 +1,47 @@
+name: "k8s-sync"
+description: "Syncs the latest docker image to the k8s repo"
+author: "Zak Shearman"
+inputs:
+  repo:
+    description: "The name of the repo to sync to (e.g. k8s-configs)"
+    default: "k8s-configs"
+
+  # Authentication
+  username:
+    description: "The username to use for the git commit"
+    default: "emortalmc-bot"
+  email:
+    description: "The email to use for the git commit"
+    default: "136233525+emortalmc-bot@users.noreply.github.com"
+  ssh-key:
+    description: "The ssh key to use for the git commit"
+    default: ${{ secrets.AUTOMATION_SSH_KEY }}
+
+  # Project details
+  docker-image-name:
+    description: "The name of the docker image to sync"
+    required: true
+  manifest-path:
+    description: "The path to the manifest file to sync NOT including argocd/managed-apps (e.g. apis/mc-player.yaml)"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ inputs.ssh-key }}
+    - name: pull, modify, and push
+      shell: bash
+      # git commit -a automatically adds files that have been modified
+      run: |
+        git clone git@github.com:emortalmc/${{ inputs.repo }}.git
+
+        git config --global user.name ${{ inputs.username }}
+        git config --global user.email ${{ inputs.email }}
+
+        cd k8s-configs
+        sed -i "s|${{ inputs.docker-image-name }}:[^ ]*|${{ inputs.docker-image-name }}:${{ github.sha }}|g" argocd/managed-apps/${{ inputs.manifest-path }}
+
+        git commit -am "(sync/${{ github.event.repository.name }}) ${{ github.event.head_commit.message }} - ${{ github.sha }}"
+        git push
