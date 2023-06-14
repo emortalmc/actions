@@ -9,6 +9,9 @@ inputs:
   dockerfile-path:
     description: "The relative path to the Dockerfile from the project root"
     default: "./Dockerfile"
+  token:
+    description: "The GitHub token used to push the Docker image to the registry"
+    required: true
 
 runs:
   using: "composite"
@@ -24,6 +27,7 @@ runs:
         cache: "gradle"
 
     - name: "Build with Gradle"
+      shell: "bash"
       run: "${{ inputs.gradle-command }}"
 
     - name: "Login to container registry"
@@ -31,7 +35,7 @@ runs:
       with:
         registry: "ghcr.io"
         username: "${{ github.actor }}"
-        password: "${{ secrets.GITHUB_TOKEN }}"
+        password: "${{ inputs.token }}"
 
     - name: "Set up Docker Buildx"
       uses: "docker/setup-buildx-action@v2"
