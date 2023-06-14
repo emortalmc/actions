@@ -1,26 +1,8 @@
 name: "k8s-sync"
 description: "Syncs the latest docker image to the k8s repo"
 author: "Zak Shearman"
+
 inputs:
-  repo:
-    description: "The name of the repo to sync to (e.g. k8s-configs)"
-    required: true
-
-  # Authentication
-  username:
-    description: "The username to use for the git commit"
-    default: "github-actions[bot]"
-  email:
-    description: "The email to use for the git commit"
-    default: "41898282+github-actions[bot]@users.noreply.github.com"
-  ssh-key:
-    description: "The ssh key to use for the git commit"
-    required: true
-
-  # Project details
-  docker-image-name:
-    description: "The name of the docker image to sync"
-    required: true
   manifest-path:
     description: "The path to the manifest file to sync (e.g. fleet.yaml)"
     required: true
@@ -39,8 +21,8 @@ runs:
       run: |
         sed -i 's|image: .*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g' ${{ inputs.manifest-path }}
 
-        git config --global user.name ${{ inputs.username }}
-        git config --global user.email ${{ inputs.email }}
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
         git commit -am "Update deployment to ${{ github.sha }}"
         git push
