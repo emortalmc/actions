@@ -28,17 +28,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: "webfactory/ssh-agent@v0.8.0"
+    - name: "Checkout"
+      uses: "actions/checkout@v3"
       with:
-        ssh-private-key: "${{ inputs.ssh-key }}"
-    - name: "pull, modify, and push"
+        ref: "deployment"
+
+    - name: "Update deployment file"
       shell: "bash"
       # git commit -a automatically adds files that have been modified
       run: |
-        git clone git@github.com:emortalmc/${{ inputs.repo }}.git
-        git checkout deployment
-
-        sed -i "s|${{ inputs.docker-image-name }}:[^ ]*|${{ inputs.docker-image-name }}:${{ github.sha }}|g" ${{ inputs.manifest-path }}
+        sed -i 's|image: .*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g' ${{ inputs.manifest-path }}
 
         git config --global user.name ${{ inputs.username }}
         git config --global user.email ${{ inputs.email }}
