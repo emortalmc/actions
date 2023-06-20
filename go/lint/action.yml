@@ -19,4 +19,4 @@ runs:
       uses: golangci/golangci-lint-action@v3
       with:
         version: latest
-        args: --timeout 2m0s
+        args: --timeout 5m0s
