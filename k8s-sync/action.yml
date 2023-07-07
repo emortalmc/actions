@@ -15,11 +15,16 @@ runs:
       with:
         ref: "deployment"
 
+    - name: "Lowercase Repo"
+      shell: "bash"
+      run: |
+        echo "REPOSITORY=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
     - name: "Update deployment file"
       shell: "bash"
       # git commit -a automatically adds files that have been modified
       run: |
-        sed -i 's|image: .*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|g' ${{ inputs.manifest-path }}
+        sed -i 's|image: .*|image: ghcr.io/${{ env.REPOSITORY }}:${{ github.sha }}|g' ${{ inputs.manifest-path }}
 
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
