@@ -9,6 +9,9 @@ inputs:
   dockerfile-path:
     description: "The relative path to the Dockerfile from the project root"
     default: "./Dockerfile"
+  java-version:
+    description: "The Java version to build with"
+    default: 20
   token:
     description: "The GitHub token used to push the Docker image to the registry"
     required: true
@@ -21,10 +24,10 @@ runs:
       
     - uses: "gradle/wrapper-validation-action@v1"
       
-    - name: "Set up JDK 17"
+    - name: "Set up JDK"
       uses: "actions/setup-java@v2"
       with:
-        java-version: 17
+        java-version: ${{ inputs.java-version }}
         distribution: "temurin"
         cache: "gradle"
 
