@@ -16,6 +16,7 @@ runs:
     # Identifies if the branch is main or not and therefore whether we should tag the image as latest
     # Creates the tags for use later (either hash or latest and hash)
     - name: "Identify Environment"
+      shell: bash
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
           echo "IS_BRANCH_MAIN=true" >> $GITHUB_ENV
