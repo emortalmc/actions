@@ -7,12 +7,8 @@ inputs:
     description: "The password used to login to the container registry"
     required: true
   should-push:
-    description: "Whether the image should be pushed to ghcr"
-    default: "nil"
-
-env:
-  # expression check should push. If nil, true, else the value.
-  SHOULD_PUSH: "${{ inputs.should-push || 'true' }}"
+    description: "Whether or not to push the image to the container registry"
+    required: true
 
 runs:
   using: "composite"
@@ -35,7 +31,7 @@ runs:
       with:
         context: "."
         file: "./Dockerfile"
-        push: "${{ env.SHOULD_PUSH }}"
+        push: "${{ inputs.should-push }}"
         platforms: linux/amd64,linux/arm64
         tags: |
           "ghcr.io/${{ github.repository }}:${{ github.sha }}"
