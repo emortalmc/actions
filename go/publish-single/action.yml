@@ -12,7 +12,7 @@ inputs:
 
 env:
   # expression check should push. If nil, true, else the value.
-  SHOULD_PUSH: "${{ env.should-push || 'true' }}"
+  SHOULD_PUSH: "${{ inputs.should-push || 'true' }}"
 
 runs:
   using: "composite"
