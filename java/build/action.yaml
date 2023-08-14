@@ -40,13 +40,16 @@ runs:
     - name: "Identify Environment"
       shell: bash
       run: |
+        tag_prefix="ghcr.io/${{ github.repository }}"
+        tags=""
+        
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          echo "IS_BRANCH_MAIN=true" >> $GITHUB_ENV
-          echo "TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }},ghcr.io/${{ github.repository }}:latest" >> $GITHUB_ENV
-        else
-          echo "IS_BRANCH_MAIN=false" >> $GITHUB_ENV
-          echo "TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}" >> $GITHUB_ENV
+          tags="$tag_prefix:${{ github.sha }},$tag_prefix:latest"
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          tags="$tag_prefix:${{github.event.pull_request.head.sha}},$tag_prefix:${{ github.event.number }}"
         fi
+        
+        echo "TAGS=$tags" >> "$GITHUB_ENV"
 
     - name: "Login to container registry"
       uses: "docker/login-action@v2"
