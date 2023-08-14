@@ -24,7 +24,7 @@ runs:
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
           tags="$tag_prefix:${{ github.sha }},$tag_prefix:latest"
         elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          tags="$tag_prefix:${{github.event.pull_request.head.sha}},$tag_prefix:${{ github.event.number }}"
+          tags="$tag_prefix:pr-${{ github.event.number }},$tag_prefix:${{github.event.pull_request.head.sha}}"
         fi
         
         echo "TAGS=$tags" >> "$GITHUB_ENV"
