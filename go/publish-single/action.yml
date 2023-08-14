@@ -12,7 +12,7 @@ runs:
   steps:
     - name: "Checkout"
       uses: "actions/checkout@v3"
-    
+
     # Identifies if the branch is main or not and therefore whether we should tag the image as latest
     # Creates the tags for use later (either hash or latest and hash)
     - name: "Identify Environment"
@@ -25,7 +25,6 @@ runs:
           echo "IS_BRANCH_MAIN=false" >> $GITHUB_ENV
           echo "TAGS=ghcr.io/${{ github.repository }}:${{ github.sha }}" >> $GITHUB_ENV
         fi
-
 
     - name: "Login to container registry"
       uses: "docker/login-action@v2"
