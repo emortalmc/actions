@@ -1,10 +1,13 @@
 name: "k8s-sync"
 description: "Syncs the latest docker image to the k8s repo"
-author: "Zak Shearman"
+author: "Zak Shearman & BomBardyGamer"
 
 inputs:
-  manifest-path:
-    description: "The path to the manifest file to sync (e.g. fleet.yaml)"
+  deployment-name:
+    description: "The name of the deployment in the update commits"
+    required: true
+  values-path:
+    description: "The path to the values file for the Helm chart"
     required: true
 
 runs:
@@ -13,21 +16,16 @@ runs:
     - name: "Checkout"
       uses: "actions/checkout@v3"
       with:
-        ref: "deployment"
+        repository: "emortalmc/argocd-deployments"
 
-    - name: "Lowercase Repo"
-      shell: "bash"
-      run: |
-        echo "REPOSITORY=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-    - name: "Update deployment file"
+    - name: "Update image version"
       shell: "bash"
       # git commit -a automatically adds files that have been modified
       run: |
-        sed -i 's|image: .*|image: ghcr.io/${{ env.REPOSITORY }}:${{ github.sha }}|g' ${{ inputs.manifest-path }}
+        sed -i 's|version: .*|version: ${{ github.sha }}|g' ${{ inputs.values-path }}
 
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-        git commit -am "Update deployment to ${{ github.sha }}"
+        git commit -am "Update image version for ${{ inputs.deployment-name }} to ${{ github.sha }}"
         git push
