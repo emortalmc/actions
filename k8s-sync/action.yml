@@ -18,6 +18,7 @@ runs:
       with:
         repository: "emortalmc/argocd-deployments"
         ref: "main"
+        token: "${{ secrets.DEPLOYMENTS_REPO_TOKEN }}"
 
     - name: "Update image version"
       shell: "bash"
@@ -29,4 +30,6 @@ runs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
         git commit -am "Update image version for ${{ inputs.deployment-name }} to ${{ github.sha }}"
-        git push
+        git push https://github-actions[bot]:$PUSH_TOKEN@github.com/emortalmc/argocd-deployments.git
+      env:
+        PUSH_TOKEN: "${{ secrets.DEPLOYMENTS_REPO_TOKEN }}"
