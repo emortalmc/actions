@@ -1,0 +1,38 @@
+name: "k8s-sync"
+description: "Syncs the latest docker image to the k8s repo"
+author: "Zak Shearman & BomBardyGamer"
+
+inputs:
+  deployment-name:
+    description: "The name of the deployment in the update commits"
+    required: true
+  values-path:
+    description: "The path to the values file for the Helm chart"
+    required: true
+  deployments-repo-token:
+    description: "The token required to authenticate with the argocd-deployments repo"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v3"
+      with:
+        repository: "emortalmc/argocd-deployments"
+        ref: "main"
+        token: "${{ inputs.deployments-repo-token }}"
+
+    - name: "Update image version"
+      shell: "bash"
+      # git commit -a automatically adds files that have been modified
+      run: |
+        sed -i 's|version: .*|version: ${{ github.sha }}|g' ${{ inputs.values-path }}
+
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+        git commit -am "Update image version for ${{ inputs.deployment-name }} to ${{ github.sha }}"
+        git push https://github-actions[bot]:$PUSH_TOKEN@github.com/emortalmc/argocd-deployments.git
+      env:
+        PUSH_TOKEN: "${{ inputs.deployments-repo-token }}"
