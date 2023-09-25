@@ -9,6 +9,9 @@ inputs:
   values-path:
     description: "The path to the values file for the Helm chart"
     required: true
+  deployments-repo-token:
+    description: "The token required to authenticate with the argocd-deployments repo"
+    required: true
 
 runs:
   using: "composite"
@@ -18,7 +21,7 @@ runs:
       with:
         repository: "emortalmc/argocd-deployments"
         ref: "main"
-        token: "${{ secrets.DEPLOYMENTS_REPO_TOKEN }}"
+        token: "${{ inputs.deployments-repo-token }}"
 
     - name: "Update image version"
       shell: "bash"
@@ -32,4 +35,4 @@ runs:
         git commit -am "Update image version for ${{ inputs.deployment-name }} to ${{ github.sha }}"
         git push https://github-actions[bot]:$PUSH_TOKEN@github.com/emortalmc/argocd-deployments.git
       env:
-        PUSH_TOKEN: "${{ secrets.DEPLOYMENTS_REPO_TOKEN }}"
+        PUSH_TOKEN: "${{ inputs.deployments-repo-token }}"
