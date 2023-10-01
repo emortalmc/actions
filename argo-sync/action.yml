@@ -32,7 +32,7 @@ runs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-        git commit -am "Update image version for ${{ inputs.deployment-name }} to ${{ github.sha }}"
+        git commit -am "Update image for ${{ inputs.deployment-name }} to ${{ github.sha }}"
         git push https://😛:$PUSH_TOKEN@github.com/emortalmc/argocd-deployments.git
       env:
         PUSH_TOKEN: "${{ inputs.deployments-repo-token }}"
