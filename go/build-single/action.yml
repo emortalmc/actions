@@ -1,0 +1,44 @@
+name: "go-build-single"
+description: "Builds a docker image for a Go service and uploads the image as an artifact (dockerimage.tar)"
+author: "Zak Shearman"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v3"
+
+    # Identifies if the branch is main or not and therefore whether we should tag the image as latest
+    # Creates the tags for use later (either hash or latest and hash)
+    - name: "Identify Environment"
+      shell: bash
+      run: |
+        tag_prefix="ghcr.io/${{ github.repository }}"
+        tags=""
+        
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          tags="$tag_prefix:${{ github.sha }},$tag_prefix:latest"
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          tags="$tag_prefix:pr-${{ github.event.number }},$tag_prefix:${{github.event.pull_request.head.sha}}"
+        fi
+        
+        echo "TAGS=$tags" >> "$GITHUB_ENV"
+
+    - name: "Set up Docker Buildx"
+      uses: "docker/setup-buildx-action@v2"
+
+    - name: "Build and push"
+      uses: "docker/build-push-action@v4"
+      with:
+        context: "."
+        file: "./Dockerfile"
+        push: true
+        platforms: linux/amd64,linux/arm64
+        tags: ${{ env.TAGS }}
+        outputs: type=docker,dest=/tmp/dockerimage.tar
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: dockerimage
+        path: /tmp/dockerimage.tar
