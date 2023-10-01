@@ -11,7 +11,7 @@ inputs:
     default: "./Dockerfile"
   java-version:
     description: "The Java version to build with"
-    default: 20
+    default: "20"
   java-distribution:
     description: "The Java version to build with"
     default: "temurin"
@@ -44,18 +44,7 @@ runs:
     # Identifies if the branch is main or not and therefore whether we should tag the image as latest
     # Creates the tags for use later (either hash or latest and hash)
     - name: "Identify Environment"
-      shell: bash
-      run: |
-        tag_prefix="ghcr.io/${{ github.repository }}"
-        tags=""
-        
-        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          tags="$tag_prefix:${{ github.sha }},$tag_prefix:latest"
-        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          tags="$tag_prefix:pr-${{ github.event.number }},$tag_prefix:${{github.event.pull_request.head.sha}}"
-        fi
-        
-        echo "TAGS=$tags" >> "$GITHUB_ENV"
+      uses: "emortalmc/actions/identify-environment-v1@main" # Outputs DOCKER_TAGS
 
     - name: "Login to container registry"
       uses: "docker/login-action@v2"
@@ -76,4 +65,4 @@ runs:
         file: "./Dockerfile"
         push: true
         platforms: linux/amd64, linux/arm64
-        tags: ${{ env.TAGS }}
+        tags: ${{ env.DOCKER_TAGS }}
