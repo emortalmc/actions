@@ -32,10 +32,6 @@ runs:
           --volume ${LOCAL_REGISTRY_PATH}:/var/lib/registry \
           --name registry registry:2
 
-    - name: Import Docker images
-      shell: bash
-      run: docker pull --platform ${{ matrix.platform }} ${IMAGE_NAME}
-
     - name: "Set up Docker Buildx"
       uses: "docker/setup-buildx-action@v3"
       with:
