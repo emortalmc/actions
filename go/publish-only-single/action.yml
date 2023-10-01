@@ -29,7 +29,7 @@ runs:
 
     - name: "Import images"
       shell: bash
-      run: docker pull --all-tags --platform $LOCAL_REGISTRY_ADDRESS/${{ github.repository }}
+      run: docker pull --all-tags --platform ${{ matrix.platform }} $LOCAL_REGISTRY_ADDRESS/${{ github.repository }}
 
     # Identifies if the branch is main or not and therefore whether we should tag the image as latest
     # Creates the tags for use later (either hash or latest and hash)
