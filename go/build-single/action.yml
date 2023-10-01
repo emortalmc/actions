@@ -11,29 +11,31 @@ runs:
   using: "composite"
   steps:
     - name: "Checkout"
-      uses: "actions/checkout@v3"
+      uses: "actions/checkout@v4"
 
     - name: "Add env vars"
       shell: bash
       run: |
-        echo "REGISTRY_PATH=${{ github.workspace }}/registry" >> "$GITHUB_ENV"
-        echo "REGISTRY_ADDRESS=localhost:5000" >> "$GITHUB_ENV"
+        echo "LOCAL_REGISTRY_PATH=${{ github.workspace }}/registry" >> "$GITHUB_ENV"
+        echo "LOCAL_REGISTRY_ADDRESS=localhost:5000" >> "$GITHUB_ENV"
 
-    # Identifies if the branch is main or not and therefore whether we should tag the image as latest
-    # Creates the tags for use later (either hash or latest and hash)
     - name: "Identify Environment"
+      uses: "emortalmc/actions/identify-environment-v1@main"
+      with:
+        registry-address: "${{ env.LOCAL_REGISTRY_ADDRESS }}"
+        env-output: "LOCAL_DOCKER_TAGS"
+
+    - name: Start Docker registry
       shell: bash
       run: |
-        tag_prefix="$REGISTRY_ADDRESS/${{ github.repository }}"
-        tags=""
-        
-        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          tags="$tag_prefix:${{ github.sha }},$tag_prefix:latest"
-        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          tags="$tag_prefix:pr-${{ github.event.number }},$tag_prefix:${{github.event.pull_request.head.sha}}"
-        fi
-        
-        echo "TAGS=$tags" >> "$GITHUB_ENV"
+        docker run --rm --detach --publish 5000:5000 \
+        --volume ${REGISTRY_PATH}:/var/lib/registry \
+        --name registry registry:2
+        sleep 2
+
+    - name: Import Docker images
+      shell: bash
+      run: docker pull --platform ${{ matrix.platform }} ${IMAGE_NAME}
 
     - name: "Set up Docker Buildx"
       uses: "docker/setup-buildx-action@v3"
@@ -44,7 +46,7 @@ runs:
       shell: bash
       run: |
         docker run --rm --detach --publish 5000:5000 \
-          --volume ${REGISTRY_PATH}:/var/lib/registry \
+          --volume ${LOCAL_REGISTRY_PATH}:/var/lib/registry \
           --name registry registry:2
 
     - name: "Build and push"
@@ -54,7 +56,7 @@ runs:
         push: true
         file: "./Dockerfile"
         platforms: linux/amd64,linux/arm64
-        tags: ${{ env.TAGS }}
+        tags: ${{ env.LOCAL_DOCKER_TAGS }}
 
     - name: Stop Docker registry
       shell: bash
@@ -64,4 +66,4 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: docker-registry-data
-        path: ${{ env.REGISTRY_PATH }}/
+        path: ${{ env.LOCAL_REGISTRY_PATH }}/
