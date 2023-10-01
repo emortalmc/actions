@@ -19,11 +19,17 @@ runs:
         echo "LOCAL_REGISTRY_PATH=${{ github.workspace }}/registry" >> "$GITHUB_ENV"
         echo "LOCAL_REGISTRY_ADDRESS=localhost:5000" >> "$GITHUB_ENV"
 
+    - name: Download Docker registry data from build job
+      uses: actions/download-artifact@v3
+      with:
+        name: docker-registry-data
+        path: ${{ env.LOCAL_REGISTRY_PATH }}
+
     - name: Start Docker registry
       shell: bash
       run: |
         docker run --rm --detach --publish 5000:5000 \
-          --volume ${{ github.workspace }}/registry:/var/lib/registry \
+          --volume LOCAL_REGISTRY_PATH:/var/lib/registry \
           --name registry registry:2
         sleep 2
 
