@@ -29,9 +29,8 @@ runs:
       shell: bash
       run: |
         docker run --rm --detach --publish 5000:5000 \
-        --volume ${REGISTRY_PATH}:/var/lib/registry \
-        --name registry registry:2
-        sleep 2
+          --volume ${LOCAL_REGISTRY_PATH}:/var/lib/registry \
+          --name registry registry:2
 
     - name: Import Docker images
       shell: bash
@@ -41,13 +40,6 @@ runs:
       uses: "docker/setup-buildx-action@v3"
       with:
         driver-opts: network=host
-
-    - name: Start Docker registry
-      shell: bash
-      run: |
-        docker run --rm --detach --publish 5000:5000 \
-          --volume ${LOCAL_REGISTRY_PATH}:/var/lib/registry \
-          --name registry registry:2
 
     - name: "Build and push"
       uses: "docker/build-push-action@v5"
