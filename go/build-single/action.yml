@@ -51,15 +51,10 @@ runs:
       uses: "docker/build-push-action@v5"
       with:
         context: "."
+        push: true
         file: "./Dockerfile"
         platforms: linux/amd64,linux/arm64
         tags: ${{ env.TAGS }}
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: dockerimage
-        path: /tmp/dockerimage.tar
 
     - name: Stop Docker registry
       shell: bash
