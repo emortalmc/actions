@@ -11,7 +11,7 @@ runs:
   using: "composite"
   steps:
     - name: "Checkout"
-      uses: "actions/checkout@v3"
+      uses: "actions/checkout@v4"
 
     # Identifies if the branch is main or not and therefore whether we should tag the image as latest
     # Creates the tags for use later (either hash or latest and hash)
