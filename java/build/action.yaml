@@ -50,6 +50,7 @@ runs:
       shell: bash
       run: |
         echo "ACTOR=${GITHUB_ACTOR,,}" >>${GITHUB_ENV}
+        echo "DOCKER_TAGS=${DOCKER_TAGS,,}" >>${GITHUB_ENV}
 
     - name: "Login to container registry"
       uses: "docker/login-action@v2"
