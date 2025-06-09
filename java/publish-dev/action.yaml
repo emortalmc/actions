@@ -22,7 +22,7 @@ runs:
 
     - name: "Get Commit Hash"
       id: "commit"
-      uses: "pr-mpt/actions-commit-hash@v2"
+      uses: "prompt/actions-commit-hash@v3"
 
     - name: "Set up Java"
       uses: "actions/setup-java@v3"
@@ -30,14 +30,8 @@ runs:
         java-version: "21"
         distribution: "zulu"
 
-    - name: "Validate Gradle wrapper"
-      uses: "gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b"
-      with:
-        wrapper-directory: "${{ inputs.root-directory }}/gradle/wrapper"
-        gradle-executable: "${{ inputs.root-directory }}/gradlew"
-
     - name: "Publish package"
-      uses: "gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1"
+      uses: "gradle/actions/setup-gradle@v4"
       with:
         arguments: "${{ inputs.publish-task }}"
         build-root-directory: "${{ inputs.root-directory }}"
