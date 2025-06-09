@@ -24,14 +24,14 @@ runs:
       id: "commit"
       uses: "prompt/actions-commit-hash@v3"
 
-    - name: "Set up Java"
-      uses: "actions/setup-java@v3"
-      with:
-        java-version: "21"
-        distribution: "zulu"
-
-    - name: "Setup Gradle"
-      uses: "gradle/actions/setup-gradle@v4"
+#    - name: "Set up Java"
+#      uses: "actions/setup-java@v3"
+#      with:
+#        java-version: "21"
+#        distribution: "zulu"
+#
+#    - name: "Setup Gradle"
+#      uses: "gradle/actions/setup-gradle@v4"
 
     - name: "Publish package"
       shell: bash
