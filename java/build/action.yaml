@@ -5,7 +5,7 @@ author: "BomBardyGamer"
 inputs:
   gradle-command:
     description: "The command executed by Gradle to build the project"
-    default: "./gradlew build"
+    default: "gradle build"
   dockerfile-path:
     description: "The relative path to the Dockerfile from the project root"
     default: "./Dockerfile"

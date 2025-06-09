@@ -35,7 +35,7 @@ runs:
 
     - name: "Publish package"
       shell: bash
-      run: "./gradlew ${{ inputs.publish-task }}"
+      run: "gradle ${{ inputs.publish-task }}"
       env:
         MAVEN_USERNAME: "${{ inputs.maven-username }}"
         MAVEN_SECRET: "${{ inputs.maven-password }}"
