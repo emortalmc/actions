@@ -30,11 +30,12 @@ runs:
         java-version: "21"
         distribution: "zulu"
 
-    - name: "Publish package"
+    - name: "Setup Gradle"
       uses: "gradle/actions/setup-gradle@v4"
-      with:
-        arguments: "${{ inputs.publish-task }}"
-        build-root-directory: "${{ inputs.root-directory }}"
+
+    - name: "Publish package"
+      shell: bash
+      run: "./gradlew ${{ inputs.publish-task }}"
       env:
         MAVEN_USERNAME: "${{ inputs.maven-username }}"
         MAVEN_SECRET: "${{ inputs.maven-password }}"
