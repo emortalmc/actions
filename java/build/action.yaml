@@ -11,10 +11,10 @@ inputs:
     default: "./Dockerfile"
   java-version:
     description: "The Java version to build with"
-    default: "21"
+    default: "25"
   java-distribution:
     description: "The Java version to build with"
-    default: "temurin"
+    default: "zulu"
   token:
     description: "The GitHub token used to push the Docker image to the registry"
     required: true
@@ -25,11 +25,11 @@ runs:
     - name: "Checkout"
       uses: "actions/checkout@v4"
 #
-#    - name: "Setup Java"
-#      uses: "actions/setup-java@v4"
-#      with:
-#        java-version: ${{ inputs.java-version }}
-#        distribution: ${{ inputs.java-distribution }}
+    - name: "Setup Java"
+      uses: "actions/setup-java@v5"
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.java-distribution }}
 
 #    - name: "Setup Gradle"
 #      uses: "gradle/actions/setup-gradle@v4"
