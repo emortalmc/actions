@@ -5,7 +5,7 @@ author: "BomBardyGamer"
 inputs:
   gradle-command:
     description: "The command executed by Gradle to build the project"
-    default: "gradle build"
+    default: "gradle build --no-daemon"
   dockerfile-path:
     description: "The relative path to the Dockerfile from the project root"
     default: "./Dockerfile"
@@ -25,11 +25,11 @@ runs:
     - name: "Checkout"
       uses: "actions/checkout@v4"
 #
-    - name: "Setup Java"
-      uses: "actions/setup-java@v5"
-      with:
-        java-version: ${{ inputs.java-version }}
-        distribution: ${{ inputs.java-distribution }}
+#    - name: "Setup Java"
+#      uses: "actions/setup-java@v5"
+#      with:
+#        java-version: ${{ inputs.java-version }}
+#        distribution: ${{ inputs.java-distribution }}
 
 #    - name: "Setup Gradle"
 #      uses: "gradle/actions/setup-gradle@v4"

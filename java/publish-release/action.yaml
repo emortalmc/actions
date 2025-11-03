@@ -24,11 +24,11 @@ runs:
       id: "commit"
       uses: "prompt/actions-commit-hash@v3"
 
-    - name: "Set up Java"
-      uses: "actions/setup-java@v5"
-      with:
-        java-version: "25"
-        distribution: "zulu"
+#    - name: "Set up Java"
+#      uses: "actions/setup-java@v5"
+#      with:
+#        java-version: "25"
+#        distribution: "zulu"
 #
 #    - name: "Setup Gradle"
 #      uses: "gradle/actions/setup-gradle@v4"
