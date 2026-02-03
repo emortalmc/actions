@@ -20,7 +20,7 @@ runs:
     - name: "Identify Environment"
       shell: bash
       run: |
-        tag_prefix="${{ inputs.registry-address }}/games:${{ inputs.project }}"
+        tag_prefix="${{ inputs.registry-address }}/${{ github.repository }}:${{ inputs.project }}"
         tags=""
 
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
