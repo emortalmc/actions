@@ -9,6 +9,8 @@ inputs:
   env-output:
     description: "The name of the environment variable to output the tags to"
     default: "DOCKER_TAGS"
+  project:
+    description: "The name of the project"
 
 runs:
   using: "composite"
@@ -18,13 +20,13 @@ runs:
     - name: "Identify Environment"
       shell: bash
       run: |
-        tag_prefix="${{ inputs.registry-address }}/${{ github.repository }}"
+        tag_prefix="${{ inputs.registry-address }}/games:${{ inputs.project }}"
         tags=""
 
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          tags="$tag_prefix:${{ github.sha }},$tag_prefix:latest"
+          tags="${tag_prefix}-${{ github.sha }},${tag_prefix}-latest"
         elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          tags="$tag_prefix:pr-${{ github.event.number }},$tag_prefix:${{github.event.pull_request.head.sha}}"
+          tags="${tag_prefix}-pr-${{ github.event.number }},${tag_prefix}-${{github.event.pull_request.head.sha}}"
         fi
 
         echo "${{ inputs.env-output }}=$tags" >> "$GITHUB_ENV"
