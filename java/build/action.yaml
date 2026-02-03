@@ -21,6 +21,9 @@ inputs:
   token:
     description: "The GitHub token used to push the Docker image to the registry"
     required: true
+  project:
+    description: "The name of the project"
+    required: true
 
 runs:
   using: "composite"
@@ -45,6 +48,8 @@ runs:
     # Creates the tags for use later (either hash or latest and hash)
     - name: "Identify Environment"
       uses: "emortalmc/actions/identify-environment-v1@main" # Outputs DOCKER_TAGS
+      with:
+        project: "${{ inputs.project }}"
 
     - name: lowercase ACTOR
       shell: bash
